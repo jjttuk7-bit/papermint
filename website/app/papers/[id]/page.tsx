@@ -3,6 +3,17 @@ import { notFound } from 'next/navigation';
 import { getAllArxivIds, getPaperByArxivId } from '@/lib/db';
 import CategoryBadge from '@/components/CategoryBadge';
 
+function splitAbstract(text: string): string[] {
+  return text
+    // 한국어 문장 끝(다/요/니다/습니다 + 마침표) 뒤에 줄바꿈
+    .replace(/([다요]\.)\s+/g, '$1\n')
+    // 영어 문장 끝(마침표 + 공백 + 대문자) 뒤에 줄바꿈
+    .replace(/([.!?])\s+([A-Z])/g, '$1\n$2')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 15);
+}
+
 interface Props {
   params: { id: string };
 }
@@ -93,7 +104,7 @@ export default function PaperPage({ params }: Props) {
       {/* 한 줄 요약 — 강조 블록 */}
       {(paper.one_liner_ko ?? paper.one_liner_en) && (
         <div className="relative bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl px-6 py-5 mb-10 border border-indigo-100">
-          <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-2">TL;DR</p>
+          <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-2">한 줄 요약</p>
           <p className="text-base text-indigo-900 leading-relaxed font-medium">
             {paper.one_liner_ko ?? paper.one_liner_en}
           </p>
@@ -140,8 +151,12 @@ export default function PaperPage({ params }: Props) {
             <span className="w-1 h-5 rounded-full bg-slate-400 inline-block" />
             초록
           </h2>
-          <div className="bg-white rounded-xl border border-slate-200 px-6 py-5">
-            <p className="text-sm text-slate-600 leading-loose">{abstract}</p>
+          <div className="bg-white rounded-xl border border-slate-200 px-6 py-6 space-y-4">
+            {splitAbstract(abstract).map((sentence, i) => (
+              <p key={i} className="text-[15px] text-slate-600 leading-[1.9]">
+                {sentence}
+              </p>
+            ))}
           </div>
         </section>
       )}
