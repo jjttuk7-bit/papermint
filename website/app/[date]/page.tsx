@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getAvailableDates, getPapersForDate, getStats } from '@/lib/db';
+import { getAvailableDates, getMonthlyDates, getPapersForDate, getStats } from '@/lib/db';
 import DateArchive from '@/components/DateArchive';
 import CategoryFilter from '@/components/CategoryFilter';
 import PaperCard from '@/components/PaperCard';
@@ -24,6 +24,7 @@ export default function DatePage({ params, searchParams }: Props) {
   const category = searchParams.category;
   const allPapers = getPapersForDate(params.date, category);
   const { total } = getStats();
+  const monthlyDates = getMonthlyDates();
   const hotPapers = !category ? allPapers.filter((dp) => dp.importance === 'hot') : [];
   const regularPapers = !category
     ? allPapers.filter((dp) => dp.importance !== 'hot')
@@ -32,7 +33,7 @@ export default function DatePage({ params, searchParams }: Props) {
 
   return (
     <main>
-      <DateArchive dates={dates} currentDate={params.date} />
+      <DateArchive dates={dates} currentDate={params.date} monthlyDates={monthlyDates} />
 
       <div className="max-w-4xl mx-auto px-4 pb-16">
         <CategoryFilter current={category} basePath={basePath} />

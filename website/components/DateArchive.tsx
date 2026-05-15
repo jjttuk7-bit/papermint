@@ -1,21 +1,26 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { getMonthlyDates } from '@/lib/db';
+
+interface MonthGroup {
+  month: string;
+  label: string;
+  dates: string[];
+}
 
 interface Props {
   dates: string[];
   currentDate: string;
+  monthlyDates: MonthGroup[];
 }
 
 function fmtTab(date: string) {
   return format(new Date(date + 'T00:00:00'), 'M/d (EEE)', { locale: ko });
 }
 
-export default function DateArchive({ dates, currentDate }: Props) {
+export default function DateArchive({ dates, currentDate, monthlyDates }: Props) {
   const recent = dates.slice(0, 7);
   const hasMore = dates.length > 7;
-  const monthly = hasMore ? getMonthlyDates() : [];
 
   return (
     <div className="border-b border-slate-200 bg-white">
@@ -43,7 +48,7 @@ export default function DateArchive({ dates, currentDate }: Props) {
               더 보기 ▾
             </summary>
             <div className="absolute top-full mt-2 left-0 z-40 bg-white border border-slate-200 rounded-xl shadow-xl p-4 min-w-[280px] max-h-80 overflow-y-auto">
-              {monthly.map(({ month, label, dates: mDates }) => (
+              {monthlyDates.map(({ month, label, dates: mDates }) => (
                 <div key={month} className="mb-4 last:mb-0">
                   <p className="text-xs font-semibold text-slate-400 mb-2">{label}</p>
                   <div className="flex flex-wrap gap-1">

@@ -128,7 +128,9 @@ export function getStats(): { total: number; today: number; latestDate: string |
   if (!db) return { total: 0, today: 0, latestDate: null };
   try {
     const total = (db.prepare('SELECT COUNT(*) as n FROM papers WHERE published = 1').get() as { n: number }).n;
-    const latestDate = getAvailableDates()[0] ?? null;
+    // getAvailableDates() 내부 호출 금지 — 중첩 DB 연결 방지
+    const latestRow = db.prepare('SELECT MAX(date) as d FROM daily_papers').get() as { d: string | null };
+    const latestDate = latestRow?.d ?? null;
     const today = latestDate
       ? (db.prepare('SELECT COUNT(*) as n FROM daily_papers WHERE date = ?').get(latestDate) as { n: number }).n
       : 0;
