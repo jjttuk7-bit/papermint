@@ -4,64 +4,98 @@ import type { DailyPaperRow } from '@/types/paper';
 
 export default function PaperCard({ dailyPaper }: { dailyPaper: DailyPaperRow }) {
   const { rank, importance, paper } = dailyPaper;
+  const isHot = importance === 'hot';
   const title = paper.title_ko || paper.title_en;
   const oneLiner = paper.one_liner_ko || paper.one_liner_en;
+  const contributions = paper.contributions_ko || paper.contributions_en || [];
   const authors = (paper.authors ?? []).slice(0, 3);
   const hasMoreAuthors = (paper.authors?.length ?? 0) > 3;
 
   return (
     <article
-      className={`bg-white rounded-xl border transition-all hover:shadow-md group ${
-        importance === 'hot'
+      className={`bg-white rounded-2xl border transition-all duration-200 hover:shadow-lg group overflow-hidden ${
+        isHot
           ? 'border-orange-200 hover:border-orange-300'
-          : 'border-slate-200 hover:border-slate-300'
+          : 'border-slate-200 hover:border-indigo-200'
       }`}
     >
-      <div className="p-5">
-        {/* 상단: 순위 + HOT + 카테고리 + upvotes */}
-        <div className="flex items-center gap-2 mb-2.5 flex-wrap">
-          {rank != null && (
-            <span className="text-xs font-mono text-slate-400 shrink-0">#{rank}</span>
-          )}
-          {importance === 'hot' && (
-            <span className="text-xs font-semibold text-orange-500 shrink-0">🔥 HOT</span>
-          )}
-          <div className="flex flex-wrap gap-1.5">
+      {/* HOT 논문: 상단 강조 바 */}
+      {isHot && (
+        <div className="h-1 bg-gradient-to-r from-orange-400 to-rose-400" />
+      )}
+
+      <div className="p-6">
+        {/* 상단: 카테고리 + 순위 + upvotes */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex flex-wrap gap-1.5 items-center">
+            {isHot && (
+              <span className="text-xs font-bold text-orange-500 mr-0.5">🔥 HOT</span>
+            )}
             {(paper.categories ?? []).map((c) => (
               <CategoryBadge key={c} category={c} />
             ))}
           </div>
-          <span className="ml-auto text-xs text-slate-400 shrink-0 font-mono">▲ {paper.upvotes}</span>
+          <div className="flex items-center gap-2 shrink-0 text-xs text-slate-400">
+            {rank != null && (
+              <span className="font-mono text-slate-300">#{rank}</span>
+            )}
+            <span className="font-semibold">▲ {paper.upvotes}</span>
+          </div>
         </div>
 
         {/* 제목 */}
-        <Link href={`/papers/${paper.arxiv_id}`}>
-          <h2 className="font-semibold text-slate-900 group-hover:text-indigo-600 leading-snug mb-1 transition-colors">
+        <Link href={`/papers/${paper.arxiv_id}`} className="block mb-1 group/title">
+          <h2 className="text-base font-bold text-slate-900 group-hover/title:text-indigo-600 leading-snug transition-colors">
             {title}
           </h2>
         </Link>
         {paper.title_ko && (
-          <p className="text-xs text-slate-400 mb-2.5 line-clamp-1">{paper.title_en}</p>
+          <p className="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-1">
+            {paper.title_en}
+          </p>
         )}
 
-        {/* 한 줄 요약 */}
+        {/* 한 줄 요약 강조 */}
         {oneLiner && (
-          <p className="text-sm text-slate-600 leading-relaxed mb-3.5 line-clamp-2">{oneLiner}</p>
+          <div className="bg-slate-50 border-l-[3px] border-indigo-400 rounded-r-lg px-4 py-2.5 mb-4">
+            <p className="text-sm text-slate-700 leading-relaxed">{oneLiner}</p>
+          </div>
+        )}
+
+        {/* 핵심 기여 미리보기 */}
+        {contributions.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
+              핵심 기여
+            </p>
+            <ul className="space-y-1.5">
+              {contributions.slice(0, 2).map((c, i) => (
+                <li key={i} className="flex gap-2.5 text-sm text-slate-600 leading-snug">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-300 shrink-0" />
+                  <span className="line-clamp-2">{c}</span>
+                </li>
+              ))}
+              {contributions.length > 2 && (
+                <li className="text-xs text-slate-400 pl-4">
+                  + {contributions.length - 2}개 더 보기 →
+                </li>
+              )}
+            </ul>
+          </div>
         )}
 
         {/* 하단: 저자 + 링크 */}
-        <div className="flex items-center gap-3 text-xs text-slate-400">
-          {authors.length > 0 && (
-            <span className="truncate flex-1">
-              {authors.join(', ')}{hasMoreAuthors ? ' 외' : ''}
-            </span>
-          )}
+        <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <span className="text-xs text-slate-400 truncate">
+            {authors.length > 0
+              ? `${authors.join(', ')}${hasMoreAuthors ? ' 외' : ''}`
+              : '저자 미상'}
+          </span>
           <div className="flex items-center gap-2 shrink-0">
             <a
               href={`https://arxiv.org/abs/${paper.arxiv_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-indigo-500 transition-colors"
+              target="_blank" rel="noopener noreferrer"
+              className="text-xs text-slate-400 hover:text-indigo-600 transition-colors font-medium"
               onClick={(e) => e.stopPropagation()}
             >
               arXiv ↗
@@ -69,9 +103,8 @@ export default function PaperCard({ dailyPaper }: { dailyPaper: DailyPaperRow })
             {paper.github_repo && (
               <a
                 href={paper.github_repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-indigo-500 transition-colors"
+                target="_blank" rel="noopener noreferrer"
+                className="text-xs text-slate-400 hover:text-indigo-600 transition-colors font-medium"
                 onClick={(e) => e.stopPropagation()}
               >
                 GitHub ↗
@@ -80,9 +113,8 @@ export default function PaperCard({ dailyPaper }: { dailyPaper: DailyPaperRow })
             {paper.project_page && (
               <a
                 href={paper.project_page}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-indigo-500 transition-colors"
+                target="_blank" rel="noopener noreferrer"
+                className="text-xs text-slate-400 hover:text-indigo-600 transition-colors font-medium"
                 onClick={(e) => e.stopPropagation()}
               >
                 Project ↗

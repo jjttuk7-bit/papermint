@@ -1,23 +1,23 @@
 const COLORS: Record<string, string> = {
-  NLP:          'bg-blue-100 text-blue-700',
-  CV:           'bg-green-100 text-green-700',
-  Multimodal:   'bg-purple-100 text-purple-700',
-  RL:           'bg-orange-100 text-orange-700',
-  Efficiency:   'bg-gray-100 text-gray-600',
-  'Medical AI': 'bg-red-100 text-red-700',
-  Audio:        'bg-yellow-100 text-yellow-700',
-  Video:        'bg-pink-100 text-pink-700',
-  Robotics:     'bg-indigo-100 text-indigo-700',
-  Theory:       'bg-slate-100 text-slate-600',
-  Survey:       'bg-stone-100 text-stone-600',
-  Agent:        'bg-cyan-100 text-cyan-700',
-  Alignment:    'bg-rose-100 text-rose-700',
+  NLP:          'bg-blue-50 text-blue-600 ring-1 ring-blue-100',
+  CV:           'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100',
+  Multimodal:   'bg-violet-50 text-violet-600 ring-1 ring-violet-100',
+  RL:           'bg-orange-50 text-orange-600 ring-1 ring-orange-100',
+  Efficiency:   'bg-slate-100 text-slate-500 ring-1 ring-slate-200',
+  'Medical AI': 'bg-red-50 text-red-600 ring-1 ring-red-100',
+  Audio:        'bg-yellow-50 text-yellow-600 ring-1 ring-yellow-100',
+  Video:        'bg-pink-50 text-pink-600 ring-1 ring-pink-100',
+  Robotics:     'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100',
+  Theory:       'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
+  Survey:       'bg-stone-100 text-stone-500 ring-1 ring-stone-200',
+  Agent:        'bg-cyan-50 text-cyan-600 ring-1 ring-cyan-100',
+  Alignment:    'bg-rose-50 text-rose-600 ring-1 ring-rose-100',
 };
 
 export default function CategoryBadge({ category }: { category: string }) {
-  const color = COLORS[category] ?? 'bg-gray-100 text-gray-600';
+  const color = COLORS[category] ?? 'bg-slate-100 text-slate-500 ring-1 ring-slate-200';
   return (
-    <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>
+    <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-md ${color}`}>
       {category}
     </span>
   );

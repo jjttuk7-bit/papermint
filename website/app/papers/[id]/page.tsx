@@ -30,13 +30,14 @@ export default function PaperPage({ params }: Props) {
   const authors = paper.authors ?? [];
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8 pb-20">
+    <main className="max-w-2xl mx-auto px-4 py-10 pb-24">
       {/* 뒤로가기 */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 mb-8 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-500 mb-10 transition-colors group"
       >
-        ← 목록으로
+        <span className="group-hover:-translate-x-0.5 transition-transform">←</span>
+        목록으로
       </Link>
 
       {/* 카테고리 + upvotes */}
@@ -44,57 +45,56 @@ export default function PaperPage({ params }: Props) {
         {(paper.categories ?? []).map((c) => (
           <CategoryBadge key={c} category={c} />
         ))}
-        <span className="ml-auto text-xs text-slate-400 font-mono">▲ {paper.upvotes}</span>
+        <span className="ml-auto text-sm text-slate-400 font-semibold">▲ {paper.upvotes}</span>
       </div>
 
       {/* 제목 */}
-      <h1 className="text-xl font-bold text-slate-900 leading-snug mb-1">
+      <h1 className="text-2xl font-bold text-slate-900 leading-tight mb-2">
         {paper.title_ko ?? paper.title_en}
       </h1>
       {paper.title_ko && (
-        <p className="text-sm text-slate-400 mb-5">{paper.title_en}</p>
+        <p className="text-sm text-slate-400 mb-6 leading-relaxed">{paper.title_en}</p>
       )}
 
-      {/* 메타 링크 */}
-      <div className="flex flex-wrap items-center gap-3 text-sm mb-6">
+      {/* 저자 + 링크 */}
+      <div className="flex flex-wrap items-center gap-2 mb-8">
         {authors.length > 0 && (
-          <span className="text-slate-500">
+          <p className="text-sm text-slate-500 mr-2">
             {authors.slice(0, 5).join(', ')}{authors.length > 5 ? ` 외 ${authors.length - 5}명` : ''}
-          </span>
+          </p>
         )}
-        <div className="flex items-center gap-2 flex-wrap">
+        <a
+          href={`https://arxiv.org/abs/${paper.arxiv_id}`}
+          target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-white hover:bg-indigo-600 transition-colors"
+        >
+          arXiv 원문 ↗
+        </a>
+        {paper.github_repo && (
           <a
-            href={`https://arxiv.org/abs/${paper.arxiv_id}`}
+            href={paper.github_repo}
             target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
           >
-            arXiv ↗
+            GitHub ↗
           </a>
-          {paper.github_repo && (
-            <a
-              href={paper.github_repo}
-              target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-            >
-              GitHub ↗
-            </a>
-          )}
-          {paper.project_page && (
-            <a
-              href={paper.project_page}
-              target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-            >
-              Project ↗
-            </a>
-          )}
-        </div>
+        )}
+        {paper.project_page && (
+          <a
+            href={paper.project_page}
+            target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+          >
+            Project ↗
+          </a>
+        )}
       </div>
 
-      {/* 한 줄 요약 */}
+      {/* 한 줄 요약 — 강조 블록 */}
       {(paper.one_liner_ko ?? paper.one_liner_en) && (
-        <div className="bg-indigo-50 border-l-4 border-indigo-400 rounded-r-lg px-5 py-4 mb-8">
-          <p className="text-sm text-indigo-900 leading-relaxed font-medium">
+        <div className="relative bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl px-6 py-5 mb-10 border border-indigo-100">
+          <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-2">TL;DR</p>
+          <p className="text-base text-indigo-900 leading-relaxed font-medium">
             {paper.one_liner_ko ?? paper.one_liner_en}
           </p>
         </div>
@@ -102,13 +102,18 @@ export default function PaperPage({ params }: Props) {
 
       {/* 핵심 기여 */}
       {contributions.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-base font-semibold text-slate-900 mb-4">핵심 기여</h2>
-          <ul className="space-y-2.5">
+        <section className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 rounded-full bg-indigo-500 inline-block" />
+            핵심 기여
+          </h2>
+          <ul className="space-y-3">
             {contributions.map((c, i) => (
-              <li key={i} className="flex gap-3 text-sm text-slate-700 leading-relaxed">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0" />
-                <span>{c}</span>
+              <li key={i} className="flex gap-4">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold flex items-center justify-center mt-0.5">
+                  {i + 1}
+                </span>
+                <p className="text-sm text-slate-700 leading-relaxed pt-0.5">{c}</p>
               </li>
             ))}
           </ul>
@@ -117,23 +122,43 @@ export default function PaperPage({ params }: Props) {
 
       {/* AI 요약 */}
       {summary && (
-        <section className="mb-8">
-          <h2 className="text-base font-semibold text-slate-900 mb-3">AI 요약</h2>
-          <p className="text-sm text-slate-700 leading-relaxed bg-white rounded-xl border border-slate-200 p-5">
-            {summary}
-          </p>
+        <section className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 rounded-full bg-emerald-500 inline-block" />
+            AI 요약
+          </h2>
+          <div className="bg-white rounded-xl border border-slate-200 px-6 py-5">
+            <p className="text-sm text-slate-700 leading-relaxed">{summary}</p>
+          </div>
         </section>
       )}
 
       {/* 초록 */}
       {abstract && (
-        <section className="mb-8">
-          <h2 className="text-base font-semibold text-slate-900 mb-3">초록</h2>
-          <p className="text-sm text-slate-600 leading-relaxed bg-white rounded-xl border border-slate-200 p-5">
-            {abstract}
-          </p>
+        <section className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 rounded-full bg-slate-400 inline-block" />
+            초록
+          </h2>
+          <div className="bg-white rounded-xl border border-slate-200 px-6 py-5">
+            <p className="text-sm text-slate-600 leading-loose">{abstract}</p>
+          </div>
         </section>
       )}
+
+      {/* 하단 링크 */}
+      <div className="pt-6 border-t border-slate-200 flex items-center justify-between">
+        <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 transition-colors">
+          ← 목록으로
+        </Link>
+        <a
+          href={`https://arxiv.org/abs/${paper.arxiv_id}`}
+          target="_blank" rel="noopener noreferrer"
+          className="text-sm text-indigo-500 hover:text-indigo-700 font-medium transition-colors"
+        >
+          논문 전체 보기 ↗
+        </a>
+      </div>
     </main>
   );
 }
