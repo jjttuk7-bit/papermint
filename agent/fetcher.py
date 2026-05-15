@@ -48,6 +48,10 @@ async def _fetch_with_retry(
 
         except httpx.HTTPStatusError as e:
             last_exc = e
+            if e.response.status_code == 400:
+                # HF API가 해당 날짜 데이터를 아직 준비 안 한 경우 (빈 날짜, 미래 날짜 등)
+                logger.info(f"400 Bad Request — 해당 날짜 논문 없음: {url}")
+                return []
             if e.response.status_code < 500:
                 raise
             logger.warning(f"5xx 에러 {e.response.status_code} — {delay}초 후 재시도 (시도 {attempt + 1}/{max_retries})")
