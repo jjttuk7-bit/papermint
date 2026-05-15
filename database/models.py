@@ -11,7 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.types import TypeDecorator
 
-_DB_PATH = Path(os.getenv("DB_PATH", "data/hf_papers.db"))
+_DB_PATH = Path(os.getenv("DB_PATH", "website/data/hf_papers.db"))
 
 
 def get_engine():

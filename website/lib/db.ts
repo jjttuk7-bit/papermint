@@ -1,7 +1,7 @@
 import path from 'path';
 import type { Paper, DailyPaperRow } from '@/types/paper';
 
-const DB_PATH = path.join(process.cwd(), '..', 'data', 'hf_papers.db');
+const DB_PATH = path.join(process.cwd(), 'data', 'hf_papers.db');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getDb(): any | null {

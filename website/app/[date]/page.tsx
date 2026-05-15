@@ -3,7 +3,6 @@ import Header from '@/components/Header';
 import PaperCard from '@/components/PaperCard';
 import { notFound } from 'next/navigation';
 
-export const dynamicParams = false;
 
 interface Props {
   params: { date: string };

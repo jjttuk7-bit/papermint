@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { getAllArxivIds, getPaperByArxivId } from '@/lib/db';
 import CategoryBadge from '@/components/CategoryBadge';
 
-export const dynamicParams = false;
 
 interface Props {
   params: { id: string };

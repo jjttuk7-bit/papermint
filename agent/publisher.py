@@ -154,7 +154,7 @@ def _git_commit_push(date: str) -> bool:
     """변경 사항 커밋 후 푸시. 변경 없으면 스킵. 실패 시 False 반환."""
     try:
         subprocess.run(
-            ["git", "add", "data/hf_papers.db", "website/content/"],
+            ["git", "add", "website/data/hf_papers.db", "website/content/"],
             check=True, capture_output=True,
         )
         diff = subprocess.run(
