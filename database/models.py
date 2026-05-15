@@ -28,7 +28,7 @@ def init_db():
 @contextmanager
 def get_session():
     engine = get_engine()
-    Session = sessionmaker(bind=engine)
+    Session = sessionmaker(bind=engine, expire_on_commit=False)
     session = Session()
     try:
         yield session
