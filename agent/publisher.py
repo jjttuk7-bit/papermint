@@ -81,8 +81,11 @@ def _upsert_paper(session, data: dict, date: str, prompt_version: str) -> Paper:
 
 def _mark_published(session, papers: list[Paper]) -> None:
     for p in papers:
-        p.published = True
-        p.published_at = datetime.now(timezone.utc)
+        # 이전 세션의 detached 객체를 새 세션에서 업데이트하려면 ID로 재조회
+        db_p = session.get(Paper, p.id)
+        if db_p:
+            db_p.published = True
+            db_p.published_at = datetime.now(timezone.utc)
 
 
 # ── Markdown 생성 ─────────────────────────────────────────────────────────────
@@ -151,31 +154,17 @@ def _generate_markdown(papers: list[Paper], daily_entries: list[DailyPaper], dat
 # ── Git 커밋/푸시 ─────────────────────────────────────────────────────────────
 
 def _git_commit_push(date: str) -> bool:
-    """변경 사항 커밋 후 푸시. 변경 없으면 스킵. 실패 시 False 반환."""
+    """변경 사항 스테이징. 커밋/푸시는 GitHub Actions 워크플로우가 담당."""
     try:
         subprocess.run(
             ["git", "add", "website/data/hf_papers.db", "website/content/"],
             check=True, capture_output=True,
         )
-        diff = subprocess.run(
-            ["git", "diff", "--staged", "--quiet"],
-            capture_output=True,
-        )
-        if diff.returncode == 0:
-            logger.info("커밋할 변경 사항 없음 — 스킵")
-            return True
-
-        subprocess.run(
-            ["git", "commit", "-m", f"daily: {date} papers update"],
-            check=True, capture_output=True,
-        )
-        subprocess.run(["git", "push"], check=True, capture_output=True)
-        logger.info(f"Git push 완료: daily {date}")
+        logger.info(f"Git staging 완료: daily {date}")
         return True
-
     except subprocess.CalledProcessError as e:
         stderr = e.stderr.decode(errors="replace") if e.stderr else ""
-        logger.error(f"Git 작업 실패: {e} — {stderr}")
+        logger.error(f"Git staging 실패: {e} — {stderr}")
         return False
 
 
