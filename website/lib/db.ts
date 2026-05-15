@@ -6,7 +6,6 @@ const DB_PATH = path.join(process.cwd(), 'data', 'hf_papers.db');
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getDb(): any | null {
   try {
-    // lazy require: 네이티브 모듈 로드 실패 시 null 반환하여 빌드 중단 방지
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Database = require('better-sqlite3');
     return new Database(DB_PATH, { readonly: true });
@@ -17,11 +16,7 @@ function getDb(): any | null {
 
 function parseJson<T>(value: unknown): T | null {
   if (!value || typeof value !== 'string') return null;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return null;
-  }
+  try { return JSON.parse(value) as T; } catch { return null; }
 }
 
 function parsePaper(row: Record<string, unknown>): Paper {
@@ -53,60 +48,90 @@ export function getAvailableDates(): string[] {
   const db = getDb();
   if (!db) return [];
   try {
-    const rows = db
-      .prepare('SELECT DISTINCT date FROM daily_papers ORDER BY date DESC')
-      .all() as { date: string }[];
-    return rows.map((r) => r.date);
-  } finally {
-    db.close();
-  }
+    return (db.prepare('SELECT DISTINCT date FROM daily_papers ORDER BY date DESC').all() as { date: string }[])
+      .map((r) => r.date);
+  } finally { db.close(); }
 }
 
-export function getPapersForDate(date: string): DailyPaperRow[] {
+export function getMonthlyDates(): { month: string; label: string; dates: string[] }[] {
+  const dates = getAvailableDates();
+  const map = new Map<string, string[]>();
+  for (const d of dates) {
+    const m = d.slice(0, 7);
+    if (!map.has(m)) map.set(m, []);
+    map.get(m)!.push(d);
+  }
+  return Array.from(map.entries()).map(([month, ds]) => {
+    const [y, m] = month.split('-');
+    return { month, label: `${y}년 ${parseInt(m)}월`, dates: ds };
+  });
+}
+
+export function getPapersForDate(date: string, category?: string): DailyPaperRow[] {
   const db = getDb();
   if (!db) return [];
   try {
-    const rows = db
-      .prepare(
-        `SELECT dp.rank, dp.importance, p.*
-         FROM daily_papers dp
-         JOIN papers p ON dp.paper_id = p.id
-         WHERE dp.date = ? AND p.published = 1
-         ORDER BY COALESCE(dp.rank, 999) ASC`
-      )
-      .all(date) as Record<string, unknown>[];
-    return rows.map((row) => ({
+    const sql = `
+      SELECT dp.rank, dp.importance, p.*
+      FROM daily_papers dp
+      JOIN papers p ON dp.paper_id = p.id
+      WHERE dp.date = ? AND p.published = 1
+      ${category ? "AND p.categories LIKE ?" : ""}
+      ORDER BY COALESCE(dp.rank, 999) ASC
+    `;
+    const params = category ? [date, `%"${category}"%`] : [date];
+    return (db.prepare(sql).all(...params) as Record<string, unknown>[]).map((row) => ({
       rank: (row.rank as number) ?? null,
       importance: (row.importance as 'hot' | 'normal') ?? 'normal',
       paper: parsePaper(row),
     }));
-  } finally {
-    db.close();
-  }
+  } finally { db.close(); }
 }
 
 export function getPaperByArxivId(arxivId: string): Paper | null {
   const db = getDb();
   if (!db) return null;
   try {
-    const row = db
-      .prepare('SELECT * FROM papers WHERE arxiv_id = ?')
-      .get(arxivId) as Record<string, unknown> | undefined;
+    const row = db.prepare('SELECT * FROM papers WHERE arxiv_id = ?').get(arxivId) as Record<string, unknown> | undefined;
     return row ? parsePaper(row) : null;
-  } finally {
-    db.close();
-  }
+  } finally { db.close(); }
 }
 
 export function getAllArxivIds(): string[] {
   const db = getDb();
   if (!db) return [];
   try {
-    const rows = db
-      .prepare('SELECT arxiv_id FROM papers WHERE published = 1')
-      .all() as { arxiv_id: string }[];
-    return rows.map((r) => r.arxiv_id);
-  } finally {
-    db.close();
-  }
+    return (db.prepare('SELECT arxiv_id FROM papers WHERE published = 1').all() as { arxiv_id: string }[])
+      .map((r) => r.arxiv_id);
+  } finally { db.close(); }
+}
+
+export function searchPapers(query: string, limit = 30): Paper[] {
+  const db = getDb();
+  if (!db) return [];
+  const like = `%${query}%`;
+  try {
+    return (db.prepare(`
+      SELECT * FROM papers
+      WHERE published = 1 AND (
+        title_ko LIKE ? OR title_en LIKE ? OR
+        abstract_ko LIKE ? OR one_liner_ko LIKE ?
+      )
+      ORDER BY upvotes DESC, published_at DESC
+      LIMIT ?
+    `).all(like, like, like, like, limit) as Record<string, unknown>[]).map(parsePaper);
+  } finally { db.close(); }
+}
+
+export function getStats(): { total: number; today: number; latestDate: string | null } {
+  const db = getDb();
+  if (!db) return { total: 0, today: 0, latestDate: null };
+  try {
+    const total = (db.prepare('SELECT COUNT(*) as n FROM papers WHERE published = 1').get() as { n: number }).n;
+    const latestDate = getAvailableDates()[0] ?? null;
+    const today = latestDate
+      ? (db.prepare('SELECT COUNT(*) as n FROM daily_papers WHERE date = ?').get(latestDate) as { n: number }).n
+      : 0;
+    return { total, today, latestDate };
+  } finally { db.close(); }
 }

@@ -1,44 +1,22 @@
 import Link from 'next/link';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import SearchBar from './SearchBar';
 
-interface Props {
-  dates: string[];
-  currentDate: string;
-}
-
-export default function Header({ dates, currentDate }: Props) {
-  const recent = dates.slice(0, 7);
-
+export default function Header() {
   return (
-    <header className="border-b border-gray-200 mb-8">
-      <div className="max-w-3xl mx-auto px-4 py-5">
-        <div className="flex items-baseline gap-3 mb-4">
-          <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-blue-600">
-            papermint
-          </Link>
-          <span className="text-sm text-gray-400">AI 논문 한국어 요약</span>
-        </div>
-
-        <nav className="flex flex-wrap gap-2">
-          {recent.map((date) => {
-            const isActive = date === currentDate;
-            const label = format(new Date(date + 'T00:00:00'), 'M/d (EEE)', { locale: ko });
-            return (
-              <Link
-                key={date}
-                href={date === dates[0] ? '/' : `/${date}/`}
-                className={`text-sm px-3 py-1 rounded-full transition-colors ${
-                  isActive
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+      <div className="max-w-4xl mx-auto px-4 h-14 flex items-center gap-4">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          <span className="text-lg font-bold text-slate-900 tracking-tight">papermint</span>
+          <span className="text-xs text-slate-400 hidden sm:block">AI 논문 한국어 요약</span>
+        </Link>
+        <div className="flex-1" />
+        <SearchBar />
+        <Link
+          href="/search"
+          className="text-sm text-slate-500 hover:text-slate-900 transition-colors hidden sm:block"
+        >
+          전체 검색
+        </Link>
       </div>
     </header>
   );
