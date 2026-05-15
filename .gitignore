@@ -1,0 +1,36 @@
+# 환경변수 (절대 커밋 금지)
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# 로그
+logs/
+
+# Node.js
+website/node_modules/
+website/.next/
+website/out/
+
+# 에디터
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Alembic 자동 생성 파일 (의도적 생성만 커밋)
+# alembic/versions/*.py  ← 주석 처리: 마이그레이션은 커밋 대상
+
+# data/hf_papers.db 는 커밋 대상 (MVP 지속성 전략 — DECISIONS.md 참조)

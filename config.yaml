@@ -1,0 +1,30 @@
+prompt_version: "v1.0"
+
+categories:
+  - NLP
+  - CV
+  - Multimodal
+  - RL
+  - Efficiency
+  - Medical AI
+  - Audio
+  - Video
+  - Robotics
+  - Theory
+  - Survey
+  - Agent
+  - Alignment
+
+llm:
+  primary_model: "gpt-4o"
+  fallback_model: "claude-3-5-sonnet-20241022"
+  max_tokens: 1500
+  temperature: 0.3
+
+fetcher:
+  max_concurrent: 3
+  timeout_seconds: 10
+  max_retries: 3
+
+notifier:
+  cost_alert_threshold: 0.50  # USD/일, 초과 시 이메일 알림
