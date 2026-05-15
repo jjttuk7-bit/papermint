@@ -41,6 +41,9 @@ function parsePaper(row: Record<string, unknown>): Paper {
     linked_models: parseJson<string[]>(row.linked_models),
     published_at: (row.published_at as string) ?? null,
     published: Boolean(row.published),
+    methodology_ko: (row.methodology_ko as string) ?? null,
+    results_ko: (row.results_ko as string) ?? null,
+    limitations_ko: (row.limitations_ko as string) ?? null,
   };
 }
 

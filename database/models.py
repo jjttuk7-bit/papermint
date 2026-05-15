@@ -87,6 +87,9 @@ class Paper(Base):
     processed_at = Column(DateTime)
     published = Column(Boolean, default=False)
     prompt_version = Column(String)
+    methodology_ko = Column(Text)
+    results_ko = Column(Text)
+    limitations_ko = Column(Text)
 
     daily_entries = relationship("DailyPaper", back_populates="paper")
 

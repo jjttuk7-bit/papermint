@@ -39,6 +39,9 @@ export default function PaperPage({ params }: Props) {
   const abstract = paper.abstract_ko ?? paper.abstract_en;
   const summary = paper.ai_summary_ko ?? paper.ai_summary_en;
   const authors = paper.authors ?? [];
+  const methodology = paper.methodology_ko;
+  const results = paper.results_ko;
+  const limitations = paper.limitations_ko;
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-10 pb-24">
@@ -128,6 +131,45 @@ export default function PaperPage({ params }: Props) {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {/* 방법론 */}
+      {methodology && (
+        <section className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 rounded-full bg-violet-500 inline-block" />
+            방법론
+          </h2>
+          <div className="bg-white rounded-xl border border-slate-200 px-6 py-5">
+            <p className="text-sm text-slate-700 leading-relaxed">{methodology}</p>
+          </div>
+        </section>
+      )}
+
+      {/* 핵심 결과 */}
+      {results && (
+        <section className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 rounded-full bg-emerald-500 inline-block" />
+            핵심 결과
+          </h2>
+          <div className="bg-emerald-50 rounded-xl border border-emerald-100 px-6 py-5">
+            <p className="text-sm text-emerald-900 leading-relaxed font-medium">{results}</p>
+          </div>
+        </section>
+      )}
+
+      {/* 한계점 */}
+      {limitations && (
+        <section className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 rounded-full bg-amber-400 inline-block" />
+            한계점
+          </h2>
+          <div className="bg-amber-50 rounded-xl border border-amber-100 px-6 py-5">
+            <p className="text-sm text-amber-900 leading-relaxed">{limitations}</p>
+          </div>
         </section>
       )}
 

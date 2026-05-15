@@ -19,6 +19,9 @@ export interface Paper {
   linked_models: string[] | null;
   published_at: string | null;
   published: boolean;
+  methodology_ko: string | null;
+  results_ko: string | null;
+  limitations_ko: string | null;
 }
 
 export interface DailyPaperRow {

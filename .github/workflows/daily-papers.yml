@@ -33,6 +33,9 @@ jobs:
       - name: Initialize DB
         run: python database/init_db.py
 
+      - name: Migrate DB (v1.1)
+        run: python database/migrate_v1.1.py
+
       - name: Run Agent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

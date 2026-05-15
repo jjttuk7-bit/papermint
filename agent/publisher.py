@@ -59,6 +59,9 @@ def _upsert_paper(session, data: dict, date: str, prompt_version: str) -> Paper:
     paper.one_liner_en = data.get("one_liner_en")
     paper.one_liner_ko = data.get("one_liner_ko")
     paper.categories = data.get("categories")
+    paper.methodology_ko = data.get("methodology_ko")
+    paper.results_ko = data.get("results_ko")
+    paper.limitations_ko = data.get("limitations_ko")
     paper.processed_at = datetime.now(timezone.utc)
     paper.prompt_version = prompt_version
 

@@ -27,6 +27,9 @@ class ProcessedPaper(TypedDict):
     title_ko: Optional[str]
     abstract_ko: Optional[str]
     ai_summary_ko: Optional[str]
+    methodology_ko: Optional[str]
+    results_ko: Optional[str]
+    limitations_ko: Optional[str]
 
 
 # ── 설정 / 프롬프트 로드 ─────────────────────────────────────────────────────
@@ -202,6 +205,9 @@ def process_with_fallback(paper: dict, config: Optional[dict] = None) -> Process
         title_ko=None,
         abstract_ko=None,
         ai_summary_ko=None,
+        methodology_ko=None,
+        results_ko=None,
+        limitations_ko=None,
     )
 
 
