@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://papermint.vercel.app',
   },
+  verification: {
+    google: 'sBPk0JemMnPNQg1-iQuDLX6ikDp52y5-OAwCtLyIFaI',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
