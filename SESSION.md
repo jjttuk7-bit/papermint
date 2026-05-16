@@ -5,7 +5,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| **최종 업데이트** | 2026-05-16 (5차) |
+| **최종 업데이트** | 2026-05-16 (최종) |
 | **현재 단계** | MVP 완성 + 운영 중 |
 | **Vercel URL** | papermint-omega.vercel.app |
 | **GitHub** | github.com/jjttuk7-bit/papermint |
@@ -29,6 +29,21 @@
 - `.github/workflows/daily-papers.yml` — KST 09:00 자동 실행, migrate_v1.1 스텝 포함
 - `.env.example`, `.gitignore`
 - `requirements.txt`
+
+### 법적 리스크 대응
+- `website/components/Footer.tsx` — 신규 생성: HuggingFace 비공식 서비스 면책 문구 + 저작권 귀속 안내
+- `website/app/layout.tsx` — Footer 컴포넌트 전체 페이지에 적용
+- `website/app/papers/[id]/page.tsx` — arXiv 링크 옆 CC BY 4.0 라이선스 배지 추가
+
+### 수익 모델 문서화
+- `BUSINESS_MODEL.md` — 신규 생성: 빠른 수익~장기 수익 8가지 모델 + 단계별 전략 정리
+
+### Google Search Console
+- `website/public/googlea033a1da0546fd2e.html` — HTML 파일 인증 추가
+- `website/app/layout.tsx` — google-site-verification 메타태그 추가
+- Vercel Authentication 비활성화 (사이트 공개 전환)
+- `https://papermint-omega.vercel.app/` 속성 소유권 확인 완료
+- sitemap.xml 제출 완료
 
 ### SEO 기본 세팅
 - `website/app/sitemap.ts` — 홈/날짜/논문 URL 전체 sitemap.xml 자동 생성
@@ -84,8 +99,16 @@
 
 ## 다음 세션 할 일
 
-1. 방문자 통계 대시보드 (`/stats` 페이지) — DB 기반
-2. Vercel Analytics 연동 (`@vercel/analytics`)
-3. RSS 피드 (`/api/feed.xml`)
-4. 이전 날짜 논문 재처리 자동화 스크립트
-5. 채용 광고 / 스폰서십 섹션 준비
+> 1주 최적화 기간 (홍보 전 안정화) 진행 중
+
+### 우선순위
+1. 내일 v1.2 번역 품질 결과 확인 → 추가 튜닝 여부 결정
+2. Twitter/X API 키 발급 + GitHub Secrets 등록 (docs/TWITTER_SETUP.md 참고)
+3. X 계정 핸들 확인 후 `layout.tsx` twitter.site/creator 추가
+
+### 이후 작업
+4. 방문자 통계 대시보드 (`/stats` 페이지) — DB 기반
+5. Vercel Analytics 연동 (`@vercel/analytics`)
+6. RSS 피드 (`/api/feed.xml`)
+7. 이전 날짜 논문 재처리 자동화 스크립트
+8. 채용 광고 / 스폰서십 섹션 준비
