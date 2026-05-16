@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 import requests
 
@@ -91,3 +92,68 @@ def notify_json_failures(date: str, count: int) -> None:
     msg = f"🔧 {date}: JSON 파싱 실패 {count}건 이상 — 프롬프트 점검 필요"
     _send_discord(msg)
     _send_slack(msg)
+
+
+# ── Twitter ───────────────────────────────────────────────────────────────────
+
+def _build_tweet(paper: dict) -> str:
+    icon = "🔥" if paper.get("importance") == "hot" else "📄"
+    title = (paper.get("title_ko") or "")[:55]
+    one_liner = paper.get("one_liner_ko") or ""
+    arxiv_id = paper.get("arxiv_id", "")
+    cats = paper.get("categories") or []
+
+    cat_tags = " ".join(f"#{c.replace(' ', '').replace('-', '')}" for c in cats[:2])
+    hashtags = f"{cat_tags} #AI논문 #papermint".strip()
+    url = f"https://papermint.vercel.app/papers/{arxiv_id}"
+
+    base = f"{icon} {title}\n\n\n\n{hashtags}\n\n🔗 {url}"
+    budget = 275 - len(base)
+    if budget > 0:
+        one_liner_trimmed = one_liner[:budget] if len(one_liner) <= budget else one_liner[:budget - 3] + "..."
+    else:
+        one_liner_trimmed = ""
+
+    return f"{icon} {title}\n\n{one_liner_trimmed}\n\n{hashtags}\n\n🔗 {url}"
+
+
+def notify_papers_twitter(date: str, papers: list[dict]) -> None:
+    """논문 목록을 Twitter에 rank 순서대로 1편씩 게시한다."""
+    api_key = os.getenv("TWITTER_API_KEY")
+    api_secret = os.getenv("TWITTER_API_SECRET")
+    access_token = os.getenv("TWITTER_ACCESS_TOKEN")
+    access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+
+    if not all([api_key, api_secret, access_token, access_token_secret]):
+        return
+
+    try:
+        import tweepy
+    except ImportError:
+        logger.warning("tweepy 미설치 — Twitter 게시 스킵")
+        return
+
+    try:
+        client = tweepy.Client(
+            consumer_key=api_key,
+            consumer_secret=api_secret,
+            access_token=access_token,
+            access_token_secret=access_token_secret,
+        )
+    except Exception as e:
+        logger.warning(f"Twitter 클라이언트 초기화 실패: {e}")
+        return
+
+    sorted_papers = sorted(papers, key=lambda p: p.get("rank") or 999)
+    posted = 0
+
+    for paper in sorted_papers:
+        try:
+            client.create_tweet(text=_build_tweet(paper))
+            posted += 1
+            if posted < len(sorted_papers):
+                time.sleep(3)
+        except Exception as e:
+            logger.warning(f"트윗 게시 실패 ({paper.get('arxiv_id')}): {e}")
+
+    logger.info(f"Twitter 게시 완료: {posted}/{len(sorted_papers)}편 ({date})")

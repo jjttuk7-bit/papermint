@@ -9,6 +9,7 @@ from agent.notifier import (
     notify_cost_alert,
     notify_failure,
     notify_json_failures,
+    notify_papers_twitter,
     notify_partial,
     notify_success,
 )
@@ -246,6 +247,21 @@ def publish(
 
         if api_cost > cost_threshold:
             notify_cost_alert(date, api_cost, cost_threshold)
+
+        importance_map = {dp.paper_id: dp.importance for dp in daily_entries}
+        rank_map_pub = {dp.paper_id: dp.rank for dp in daily_entries}
+        notify_papers_twitter(date, [
+            {
+                "title_ko": p.title_ko or p.title_en,
+                "one_liner_ko": p.one_liner_ko,
+                "categories": p.categories or [],
+                "arxiv_id": p.arxiv_id,
+                "importance": importance_map.get(p.id, "normal"),
+                "rank": rank_map_pub.get(p.id),
+            }
+            for p in saved_papers
+            if p.title_ko
+        ])
 
         json_failures = sum(
             1 for p in papers

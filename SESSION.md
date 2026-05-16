@@ -5,7 +5,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| **최종 업데이트** | 2026-05-16 (3차) |
+| **최종 업데이트** | 2026-05-16 (4차) |
 | **현재 단계** | MVP 완성 + 운영 중 |
 | **Vercel URL** | papermint.vercel.app |
 | **GitHub** | github.com/jjttuk7-bit/papermint |
@@ -29,6 +29,14 @@
 - `.github/workflows/daily-papers.yml` — KST 09:00 자동 실행, migrate_v1.1 스텝 포함
 - `.env.example`, `.gitignore`
 - `requirements.txt`
+
+### SNS 자동 게시
+- `agent/notifier.py` — `notify_papers_twitter()` 추가: 논문 rank 순으로 Twitter에 1편씩 트윗
+- `agent/publisher.py` — 게시 성공 후 `notify_papers_twitter()` 호출
+- `requirements.txt` — `tweepy>=4.14` 추가
+- `.github/workflows/daily-papers.yml` — Twitter 시크릿 4개 env 추가
+- `.env.example` — Twitter 키 항목 추가
+- 트윗 형식: 🔥(hot)/📄(normal) + 제목(한국어) + 한줄요약 + 해시태그 + 논문 링크
 
 ### 버그픽스
 - `agent/fetcher.py` — `get_yesterday_utc()` 추가: HF API 조회용 UTC 어제 날짜
