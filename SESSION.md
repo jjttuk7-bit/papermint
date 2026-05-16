@@ -5,7 +5,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| **최종 업데이트** | 2026-05-16 |
+| **최종 업데이트** | 2026-05-16 (2차) |
 | **현재 단계** | MVP 완성 + 운영 중 |
 | **Vercel URL** | papermint.vercel.app |
 | **GitHub** | github.com/jjttuk7-bit/papermint |
@@ -29,6 +29,13 @@
 - `.github/workflows/daily-papers.yml` — KST 09:00 자동 실행, migrate_v1.1 스텝 포함
 - `.env.example`, `.gitignore`
 - `requirements.txt`
+
+### 버그픽스
+- `agent/fetcher.py` — `get_yesterday_utc()` 추가: HF API 조회용 UTC 어제 날짜
+- `agent/main.py` — `_resolve_date()` → `(db_date, hf_date)` 튜플 반환으로 변경
+  - 자동 실행: db_date=KST 오늘, hf_date=UTC 어제 (분리)
+  - 수동 실행(`--date` / `FETCH_DATE`): 두 날짜 동일 (기존 동작 유지)
+  - 배경: HF API는 UTC 기준이며 UTC 00:00(=KST 09:00)에는 당일 데이터 미완성 → 전날 완성 데이터 조회 필요
 
 ### 웹사이트 (Next.js 14 + Vercel)
 - `website/next.config.mjs` — SSR, serverComponentsExternalPackages
@@ -55,6 +62,7 @@
 - better-sqlite3는 Vercel Lambda 런타임 비호환 → 빌드 타임에만 DB 접근 (정적 빌드)
 - 카테고리 필터는 클라이언트 사이드 (PapersView.tsx)
 - `/search` 페이지만 Dynamic(ƒ) — 나머지 전부 Static
+- 2026-05-16 전환 과도기: 5/15·5/16 동일 논문 표시 (HF May15 UTC 데이터 양쪽에 저장). 5/17부터 정상화.
 
 ---
 
