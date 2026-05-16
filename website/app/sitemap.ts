@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAvailableDates, getAllArxivIds } from '@/lib/db';
 
-const BASE_URL = 'https://papermint.vercel.app';
+const BASE_URL = 'https://papermint-omega.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const dates = getAvailableDates();

@@ -105,7 +105,7 @@ def _build_tweet(paper: dict) -> str:
 
     cat_tags = " ".join(f"#{c.replace(' ', '').replace('-', '')}" for c in cats[:2])
     hashtags = f"{cat_tags} #AI논문 #papermint".strip()
-    url = f"https://papermint.vercel.app/papers/{arxiv_id}"
+    url = f"https://papermint-omega.vercel.app/papers/{arxiv_id}"
 
     base = f"{icon} {title}\n\n\n\n{hashtags}\n\n🔗 {url}"
     budget = 275 - len(base)

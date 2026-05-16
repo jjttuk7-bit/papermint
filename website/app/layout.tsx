@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://papermint.vercel.app'),
+  metadataBase: new URL('https://papermint-omega.vercel.app'),
   title: {
     default: 'papermint — AI 논문 한국어 요약',
     template: '%s — papermint',
@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     siteName: 'papermint',
     title: 'papermint — AI 논문 한국어 요약',
     description: '매일 HuggingFace Papers 상위 AI/ML 논문을 한국어로 번역·요약합니다.',
-    url: 'https://papermint.vercel.app',
+    url: 'https://papermint-omega.vercel.app',
   },
   twitter: {
     card: 'summary',
     // TODO: X 계정 핸들 확인 후 site/creator 추가
   },
   alternates: {
-    canonical: 'https://papermint.vercel.app',
+    canonical: 'https://papermint-omega.vercel.app',
   },
   verification: {
     google: 'sBPk0JemMnPNQg1-iQuDLX6ikDp52y5-OAwCtLyIFaI',

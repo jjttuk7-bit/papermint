@@ -19,10 +19,10 @@ export function generateMetadata({ params }: Props) {
     openGraph: {
       title: `${params.date} AI 논문 요약`,
       description,
-      url: `https://papermint.vercel.app/${params.date}`,
+      url: `https://papermint-omega.vercel.app/${params.date}`,
     },
     alternates: {
-      canonical: `https://papermint.vercel.app/${params.date}`,
+      canonical: `https://papermint-omega.vercel.app/${params.date}`,
     },
   };
 }

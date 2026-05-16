@@ -7,7 +7,7 @@
 |---|---|
 | **최종 업데이트** | 2026-05-16 (5차) |
 | **현재 단계** | MVP 완성 + 운영 중 |
-| **Vercel URL** | papermint.vercel.app |
+| **Vercel URL** | papermint-omega.vercel.app |
 | **GitHub** | github.com/jjttuk7-bit/papermint |
 
 ---

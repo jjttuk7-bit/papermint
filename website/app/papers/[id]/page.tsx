@@ -27,7 +27,7 @@ export function generateMetadata({ params }: Props) {
   if (!paper) return {};
   const title = paper.title_ko ?? paper.title_en;
   const description = paper.one_liner_ko ?? paper.one_liner_en ?? '';
-  const url = `https://papermint.vercel.app/papers/${params.id}`;
+  const url = `https://papermint-omega.vercel.app/papers/${params.id}`;
   return {
     title,
     description,
@@ -69,12 +69,12 @@ export default function PaperPage({ params }: Props) {
     author: authors.map((name) => ({ '@type': 'Person', name })),
     datePublished: paper.published_at ?? undefined,
     inLanguage: 'ko',
-    url: `https://papermint.vercel.app/papers/${paper.arxiv_id}`,
+    url: `https://papermint-omega.vercel.app/papers/${paper.arxiv_id}`,
     sameAs: `https://arxiv.org/abs/${paper.arxiv_id}`,
     publisher: {
       '@type': 'Organization',
       name: 'papermint',
-      url: 'https://papermint.vercel.app',
+      url: 'https://papermint-omega.vercel.app',
     },
   };
 

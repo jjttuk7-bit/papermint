@@ -16,7 +16,7 @@
 
 #NLP #Efficiency #AI논문 #papermint
 
-🔗 https://papermint.vercel.app/papers/1706.03762
+🔗 https://papermint-omega.vercel.app/papers/1706.03762
 ```
 
 - 🔥 = HuggingFace 기준 "hot" 논문 / 📄 = 일반 논문
