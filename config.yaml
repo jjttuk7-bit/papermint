@@ -25,6 +25,7 @@ fetcher:
   max_concurrent: 3
   timeout_seconds: 10
   max_retries: 3
+  top_papers: 5        # upvotes 상위 N편만 처리 (0 = 전체)
 
 notifier:
   cost_alert_threshold: 0.50  # USD/일, 초과 시 이메일 알림

@@ -210,6 +210,12 @@ def main() -> int:
         logger.info(f"[{date}] 논문 없음 (휴일 또는 API 미업데이트) -종료")
         return 0
 
+    top_n = config.get("fetcher", {}).get("top_papers", 0)
+    if top_n and top_n > 0:
+        total_fetched = len(raw_papers)
+        raw_papers = sorted(raw_papers, key=lambda p: p.get("upvotes") or 0, reverse=True)[:top_n]
+        logger.info(f"[{date}] upvotes 상위 {len(raw_papers)}편 선별 (전체 수집: {total_fetched}편)")
+
     return _run_pipeline(raw_papers, date, config, args.dry_run, job_id)
 
 
