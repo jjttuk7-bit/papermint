@@ -123,6 +123,14 @@ export default function PaperPage({ params }: Props) {
         >
           arXiv 원문 ↗
         </a>
+        <a
+          href="https://creativecommons.org/licenses/by/4.0/"
+          target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+          title="논문 원문 라이선스 (저자마다 다를 수 있습니다)"
+        >
+          CC BY 4.0
+        </a>
         {paper.github_repo && (
           <a
             href={paper.github_repo}
