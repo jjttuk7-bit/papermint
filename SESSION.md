@@ -5,7 +5,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| **최종 업데이트** | 2026-05-16 (4차) |
+| **최종 업데이트** | 2026-05-16 (5차) |
 | **현재 단계** | MVP 완성 + 운영 중 |
 | **Vercel URL** | papermint.vercel.app |
 | **GitHub** | github.com/jjttuk7-bit/papermint |
@@ -29,6 +29,13 @@
 - `.github/workflows/daily-papers.yml` — KST 09:00 자동 실행, migrate_v1.1 스텝 포함
 - `.env.example`, `.gitignore`
 - `requirements.txt`
+
+### SEO 기본 세팅
+- `website/app/sitemap.ts` — 홈/날짜/논문 URL 전체 sitemap.xml 자동 생성
+- `website/app/robots.ts` — robots.txt + sitemap 경로 안내
+- `website/app/layout.tsx` — metadataBase, title template, OG/Twitter 카드, keywords 추가
+- `website/app/[date]/page.tsx` — 날짜별 description + OG + canonical 추가
+- `website/app/papers/[id]/page.tsx` — 논문별 OG article 태그 + JSON-LD (ScholarlyArticle) 추가
 
 ### SNS 자동 게시
 - `agent/notifier.py` — `notify_papers_twitter()` 추가: 논문 rank 순으로 Twitter에 1편씩 트윗

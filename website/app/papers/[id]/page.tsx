@@ -25,9 +25,27 @@ export async function generateStaticParams() {
 export function generateMetadata({ params }: Props) {
   const paper = getPaperByArxivId(params.id);
   if (!paper) return {};
+  const title = paper.title_ko ?? paper.title_en;
+  const description = paper.one_liner_ko ?? paper.one_liner_en ?? '';
+  const url = `https://papermint.vercel.app/papers/${params.id}`;
   return {
-    title: `${paper.title_ko ?? paper.title_en} — papermint`,
-    description: paper.one_liner_ko ?? paper.one_liner_en ?? '',
+    title,
+    description,
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      url,
+      publishedTime: paper.published_at ?? undefined,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+    alternates: {
+      canonical: url,
+    },
   };
 }
 
@@ -43,8 +61,29 @@ export default function PaperPage({ params }: Props) {
   const results = paper.results_ko;
   const limitations = paper.limitations_ko;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ScholarlyArticle',
+    headline: paper.title_ko ?? paper.title_en,
+    description: paper.one_liner_ko ?? paper.one_liner_en ?? '',
+    author: authors.map((name) => ({ '@type': 'Person', name })),
+    datePublished: paper.published_at ?? undefined,
+    inLanguage: 'ko',
+    url: `https://papermint.vercel.app/papers/${paper.arxiv_id}`,
+    sameAs: `https://arxiv.org/abs/${paper.arxiv_id}`,
+    publisher: {
+      '@type': 'Organization',
+      name: 'papermint',
+      url: 'https://papermint.vercel.app',
+    },
+  };
+
   return (
     <main className="max-w-2xl mx-auto px-4 py-10 pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* 뒤로가기 */}
       <Link
         href="/"

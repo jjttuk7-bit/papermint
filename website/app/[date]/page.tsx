@@ -12,7 +12,19 @@ export async function generateStaticParams() {
 }
 
 export function generateMetadata({ params }: Props) {
-  return { title: `${params.date} 논문 요약 — papermint` };
+  const description = `${params.date} HuggingFace Papers 상위 AI/ML 논문을 한국어로 번역·요약했습니다.`;
+  return {
+    title: `${params.date} AI 논문 요약`,
+    description,
+    openGraph: {
+      title: `${params.date} AI 논문 요약`,
+      description,
+      url: `https://papermint.vercel.app/${params.date}`,
+    },
+    alternates: {
+      canonical: `https://papermint.vercel.app/${params.date}`,
+    },
+  };
 }
 
 export default function DatePage({ params }: Props) {

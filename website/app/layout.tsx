@@ -11,8 +11,28 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'papermint — AI 논문 한국어 요약',
-  description: '매일 HuggingFace Papers의 최신 AI/ML 논문을 한국어로 번역·요약합니다.',
+  metadataBase: new URL('https://papermint.vercel.app'),
+  title: {
+    default: 'papermint — AI 논문 한국어 요약',
+    template: '%s — papermint',
+  },
+  description: '매일 HuggingFace Papers 상위 AI/ML 논문을 한국어로 번역·요약합니다. 최신 딥러닝, NLP, 컴퓨터 비전 연구를 한국어로 쉽게 읽으세요.',
+  keywords: ['AI 논문', 'ML 논문', '인공지능', '딥러닝', 'NLP', '컴퓨터 비전', '논문 요약', '한국어'],
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: 'papermint',
+    title: 'papermint — AI 논문 한국어 요약',
+    description: '매일 HuggingFace Papers 상위 AI/ML 논문을 한국어로 번역·요약합니다.',
+    url: 'https://papermint.vercel.app',
+  },
+  twitter: {
+    card: 'summary',
+    // TODO: X 계정 핸들 확인 후 site/creator 추가
+  },
+  alternates: {
+    canonical: 'https://papermint.vercel.app',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
