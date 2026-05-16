@@ -23,6 +23,11 @@ def get_today_kst() -> str:
     return datetime.now(KST).strftime("%Y-%m-%d")
 
 
+def get_yesterday_utc() -> str:
+    """HF API 조회용: UTC 기준 어제 날짜 (파이프라인 실행 시각 UTC 00:00 기준으로 전날이 완성된 데이터)."""
+    return (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+
+
 async def _fetch_with_retry(
     client: httpx.AsyncClient,
     url: str,

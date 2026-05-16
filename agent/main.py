@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from database.models import Paper, get_session, init_db
-from agent.fetcher import fetch_papers, get_today_kst
+from agent.fetcher import fetch_papers, get_today_kst, get_yesterday_utc
 from agent.processor import load_config, process_with_fallback
 from agent.publisher import publish
 
@@ -74,10 +74,16 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _resolve_date(args: argparse.Namespace) -> str:
-    if args.date:
-        return args.date
-    return os.getenv("FETCH_DATE") or get_today_kst()
+def _resolve_date(args: argparse.Namespace) -> tuple[str, str]:
+    """(db_date, hf_fetch_date) 반환.
+
+    수동 지정(--date / FETCH_DATE)이면 두 날짜가 같다.
+    자동 실행이면 db_date=KST 오늘, hf_fetch_date=UTC 어제 (HF는 UTC 00:00에 전날 데이터가 완성됨).
+    """
+    manual = args.date or os.getenv("FETCH_DATE")
+    if manual:
+        return manual, manual
+    return get_today_kst(), get_yesterday_utc()
 
 
 # ── 재처리 헬퍼 ──────────────────────────────────────────────────────────────
@@ -176,10 +182,10 @@ def _run_pipeline(
 
 def main() -> int:
     args = _parse_args()
-    date = _resolve_date(args)
+    date, hf_date = _resolve_date(args)
 
     _setup_logging(date)
-    logger.info(f"=== papermint 시작 | 날짜: {date} | dry-run: {args.dry_run} ===")
+    logger.info(f"=== papermint 시작 | 게시 날짜: {date} | HF 조회 날짜: {hf_date} | dry-run: {args.dry_run} ===")
 
     config = load_config()
     init_db()
@@ -197,8 +203,8 @@ def main() -> int:
         return _run_pipeline([paper], paper_date, config, args.dry_run, job_id)
 
     # ── 일반 모드 ─────────────────────────────────────────────────────────────
-    logger.info(f"[{date}] 논문 수집 시작")
-    raw_papers = fetch_papers(date)
+    logger.info(f"[{date}] 논문 수집 시작 (HF 조회: {hf_date})")
+    raw_papers = fetch_papers(hf_date)
 
     if not raw_papers:
         logger.info(f"[{date}] 논문 없음 (휴일 또는 API 미업데이트) -종료")
