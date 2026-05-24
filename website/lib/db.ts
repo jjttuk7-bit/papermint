@@ -44,6 +44,8 @@ function parsePaper(row: Record<string, unknown>): Paper {
     methodology_ko: (row.methodology_ko as string) ?? null,
     results_ko: (row.results_ko as string) ?? null,
     limitations_ko: (row.limitations_ko as string) ?? null,
+    is_classic: Boolean(row.is_classic),
+    classic_slot: (row.classic_slot as Paper['classic_slot']) ?? null,
   };
 }
 
@@ -78,12 +80,37 @@ export function getPapersForDate(date: string, category?: string): DailyPaperRow
       SELECT dp.rank, dp.importance, p.*
       FROM daily_papers dp
       JOIN papers p ON dp.paper_id = p.id
-      WHERE dp.date = ? AND p.published = 1
+      WHERE dp.date = ? AND p.published = 1 AND COALESCE(p.is_classic, 0) = 0
       ${category ? "AND p.categories LIKE ?" : ""}
       ORDER BY COALESCE(dp.rank, 999) ASC
     `;
     const params = category ? [date, `%"${category}"%`] : [date];
     return (db.prepare(sql).all(...params) as Record<string, unknown>[]).map((row) => ({
+      rank: (row.rank as number) ?? null,
+      importance: (row.importance as 'hot' | 'normal') ?? 'normal',
+      paper: parsePaper(row),
+    }));
+  } finally { db.close(); }
+}
+
+export function getClassicsForDate(date: string): DailyPaperRow[] {
+  const db = getDb();
+  if (!db) return [];
+  try {
+    const sql = `
+      SELECT dp.rank, dp.importance, p.*
+      FROM daily_papers dp
+      JOIN papers p ON dp.paper_id = p.id
+      WHERE dp.date = ? AND p.published = 1 AND p.is_classic = 1
+      ORDER BY
+        CASE p.classic_slot
+          WHEN 'foundation' THEN 1
+          WHEN 'vision' THEN 2
+          WHEN 'language' THEN 3
+          ELSE 4
+        END
+    `;
+    return (db.prepare(sql).all(date) as Record<string, unknown>[]).map((row) => ({
       rank: (row.rank as number) ?? null,
       importance: (row.importance as 'hot' | 'normal') ?? 'normal',
       paper: parsePaper(row),

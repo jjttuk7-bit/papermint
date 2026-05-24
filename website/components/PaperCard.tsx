@@ -2,9 +2,17 @@ import Link from 'next/link';
 import CategoryBadge from './CategoryBadge';
 import type { DailyPaperRow } from '@/types/paper';
 
+const CLASSIC_SLOT_LABEL: Record<string, string> = {
+  foundation: '🏛️ Foundation',
+  vision: '🖼️ Vision',
+  language: '💬 Language',
+};
+
 export default function PaperCard({ dailyPaper }: { dailyPaper: DailyPaperRow }) {
   const { rank, importance, paper } = dailyPaper;
   const isHot = importance === 'hot';
+  const isClassic = paper.is_classic;
+  const slotLabel = isClassic && paper.classic_slot ? CLASSIC_SLOT_LABEL[paper.classic_slot] : null;
   const title = paper.title_ko || paper.title_en;
   const oneLiner = paper.one_liner_ko || paper.one_liner_en;
   const contributions = paper.contributions_ko || paper.contributions_en || [];
@@ -16,12 +24,18 @@ export default function PaperCard({ dailyPaper }: { dailyPaper: DailyPaperRow })
       className={`bg-white rounded-2xl border transition-all duration-200 hover:shadow-lg group overflow-hidden ${
         isHot
           ? 'border-orange-200 hover:border-orange-300'
-          : 'border-slate-200 hover:border-indigo-200'
+          : isClassic
+            ? 'border-amber-200 hover:border-amber-300'
+            : 'border-slate-200 hover:border-indigo-200'
       }`}
     >
       {/* HOT 논문: 상단 강조 바 */}
       {isHot && (
         <div className="h-1 bg-gradient-to-r from-orange-400 to-rose-400" />
+      )}
+      {/* Classic 논문: 상단 강조 바 */}
+      {!isHot && isClassic && (
+        <div className="h-1 bg-gradient-to-r from-amber-400 to-yellow-300" />
       )}
 
       <div className="p-6">
@@ -30,6 +44,11 @@ export default function PaperCard({ dailyPaper }: { dailyPaper: DailyPaperRow })
           <div className="flex flex-wrap gap-1.5 items-center">
             {isHot && (
               <span className="text-xs font-bold text-orange-500 mr-0.5">🔥 HOT</span>
+            )}
+            {slotLabel && (
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                {slotLabel}
+              </span>
             )}
             {(paper.categories ?? []).map((c) => (
               <CategoryBadge key={c} category={c} />

@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from database.models import Paper, get_session, init_db
+from agent.classics import fetch_classics
 from agent.fetcher import fetch_papers, get_today_kst, get_yesterday_utc
 from agent.processor import load_config, process_with_fallback
 from agent.publisher import publish
@@ -204,17 +205,26 @@ def main() -> int:
 
     # ── 일반 모드 ─────────────────────────────────────────────────────────────
     logger.info(f"[{date}] 논문 수집 시작 (HF 조회: {hf_date})")
-    raw_papers = fetch_papers(hf_date)
+    daily_papers = fetch_papers(hf_date)
 
+    top_n = config.get("fetcher", {}).get("top_papers", 0)
+    if daily_papers and top_n and top_n > 0:
+        total_fetched = len(daily_papers)
+        daily_papers = sorted(daily_papers, key=lambda p: p.get("upvotes") or 0, reverse=True)[:top_n]
+        logger.info(f"[{date}] upvotes 상위 {len(daily_papers)}편 선별 (전체 수집: {total_fetched}편)")
+
+    # Classics: 슬롯별 1편씩 (일간 논문과 중복되는 ID는 제외)
+    daily_ids = {p.get("arxiv_id") for p in daily_papers if p.get("arxiv_id")}
+    classics = fetch_classics(exclude_ids=daily_ids)
+    if classics:
+        logger.info(f"[{date}] classics {len(classics)}편 추가: " + ", ".join(
+            f"{c['classic_slot']}:{c['arxiv_id']}" for c in classics
+        ))
+
+    raw_papers = daily_papers + classics
     if not raw_papers:
         logger.info(f"[{date}] 논문 없음 (휴일 또는 API 미업데이트) -종료")
         return 0
-
-    top_n = config.get("fetcher", {}).get("top_papers", 0)
-    if top_n and top_n > 0:
-        total_fetched = len(raw_papers)
-        raw_papers = sorted(raw_papers, key=lambda p: p.get("upvotes") or 0, reverse=True)[:top_n]
-        logger.info(f"[{date}] upvotes 상위 {len(raw_papers)}편 선별 (전체 수집: {total_fetched}편)")
 
     return _run_pipeline(raw_papers, date, config, args.dry_run, job_id)
 

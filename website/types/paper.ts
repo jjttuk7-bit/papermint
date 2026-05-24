@@ -22,6 +22,8 @@ export interface Paper {
   methodology_ko: string | null;
   results_ko: string | null;
   limitations_ko: string | null;
+  is_classic: boolean;
+  classic_slot: 'foundation' | 'vision' | 'language' | null;
 }
 
 export interface DailyPaperRow {

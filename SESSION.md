@@ -5,8 +5,8 @@
 
 | 항목 | 내용 |
 |---|---|
-| **최종 업데이트** | 2026-05-16 (최종) |
-| **현재 단계** | MVP 완성 + 운영 중 |
+| **최종 업데이트** | 2026-05-25 |
+| **현재 단계** | MVP 운영 중 + Classics 기능 #1~#6 완료 (알림 #7 미적용) |
 | **Vercel URL** | papermint-omega.vercel.app |
 | **GitHub** | github.com/jjttuk7-bit/papermint |
 
@@ -60,6 +60,24 @@
 - `.env.example` — Twitter 키 항목 추가
 - 트윗 형식: 🔥(hot)/📄(normal) + 제목(한국어) + 한줄요약 + 해시태그 + 논문 링크
 
+### Classics (역대급 논문 큐레이션) — Phase A #1~#6
+- `config/classics.yml` — Foundation/Vision/Language 슬롯별 60편 (총 180편) arxiv_id 시드
+- `scripts/verify_classics.py` — HF Papers API + arxiv.org 일괄 검증 (1회성 + 재검증용)
+- `database/schema.sql`, `database/models.py` — `is_classic`, `classic_slot` 컬럼 + 인덱스
+- `database/migrate_v1.2.py` — ALTER TABLE + CREATE INDEX 마이그레이션
+- `agent/fetcher.py` — `fetch_papers_by_ids()` 공개 함수 추가 (임의 arxiv_id 메타 수집)
+- `agent/classics.py` — rotator: DB 미사용 ID 우선 + 슬롯 라운드로빈 + 일간 중복 시 스킵 + 소진 시 가장 오래된 것 재선택
+- `agent/main.py` — 일간 fetch 직후 `fetch_classics(exclude_ids=daily_ids)` 호출하여 합쳐서 처리 파이프라인 태움
+- `agent/publisher.py` — `_upsert_paper`에서 `is_classic`/`classic_slot` 저장
+- `.github/workflows/daily-papers.yml` — `migrate_v1.2.py` 실행 스텝 추가
+- 비용 영향: LLM 3회/일 추가 = ~+$0.05/일. 슬롯당 ~60일 주기로 순환.
+- `website/types/paper.ts`, `website/lib/db.ts` — Paper에 `is_classic`/`classic_slot` 노출, `getClassicsForDate()` 추가, `getPapersForDate()`는 classic 제외
+- `website/components/ClassicsSection.tsx` — 신규: 슬롯별 카드 3개 가로 정렬 (`md:grid-cols-3`), amber 톤 헤더. **client component**로 작성해야 함 (PaperCard 내부 onClick 핸들러가 server tree에서 에러 발생)
+- `website/components/PaperCard.tsx` — classic 카드에 amber 그라데이션 바 + `🏛️ Foundation / 🖼️ Vision / 💬 Language` 슬롯 배지 추가
+- `website/app/page.tsx`, `website/app/[date]/page.tsx` — `<ClassicsSection>`을 카테고리 필터 위에 삽입
+- 검증: dry-run으로 일간 없음 + classics 3편(Transformer/VGG/BERT) 정상 fetch 확인 / 임시 마킹 3편으로 dev 서버 시각 검증 후 롤백 / production build 통과
+- 미적용: #7 (Discord/이메일/트위터 알림에 Classics 포함)
+
 ### 버그픽스
 - `agent/fetcher.py` — `get_yesterday_utc()` 추가: HF API 조회용 UTC 어제 날짜
 - `agent/main.py` — `_resolve_date()` → `(db_date, hf_date)` 튜플 반환으로 변경
@@ -102,13 +120,15 @@
 > 1주 최적화 기간 (홍보 전 안정화) 진행 중
 
 ### 우선순위
-1. 내일 v1.2 번역 품질 결과 확인 → 추가 튜닝 여부 결정
-2. Twitter/X API 키 발급 + GitHub Secrets 등록 (docs/TWITTER_SETUP.md 참고)
-3. X 계정 핸들 확인 후 `layout.tsx` twitter.site/creator 추가
+1. Classics #7 — Discord/이메일/트위터 알림 템플릿에 역대급 3편 섹션 추가
+2. 내일 v1.2 번역 품질 결과 확인 → 추가 튜닝 여부 결정
+3. Twitter/X API 키 발급 + GitHub Secrets 등록 (docs/TWITTER_SETUP.md 참고)
+4. X 계정 핸들 확인 후 `layout.tsx` twitter.site/creator 추가
 
 ### 이후 작업
-4. 방문자 통계 대시보드 (`/stats` 페이지) — DB 기반
-5. Vercel Analytics 연동 (`@vercel/analytics`)
-6. RSS 피드 (`/api/feed.xml`)
-7. 이전 날짜 논문 재처리 자동화 스크립트
-8. 채용 광고 / 스폰서십 섹션 준비
+6. 인기 모델 3개/일 (Phase B) — 새 테이블 + 새 페이지 설계 필요
+7. 방문자 통계 대시보드 (`/stats` 페이지) — DB 기반
+8. Vercel Analytics 연동 (`@vercel/analytics`)
+9. RSS 피드 (`/api/feed.xml`)
+10. 이전 날짜 논문 재처리 자동화 스크립트
+11. 채용 광고 / 스폰서십 섹션 준비

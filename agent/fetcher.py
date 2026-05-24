@@ -179,3 +179,29 @@ def fetch_papers(date: Optional[str] = None) -> list[dict]:
     if date is None:
         date = get_today_kst()
     return asyncio.run(_fetch_all(date))
+
+
+async def _fetch_by_ids(arxiv_ids: list[str], max_concurrent: int = 3) -> list[dict]:
+    """주어진 arxiv_id 리스트의 상세 메타를 병렬로 수집해 정규화된 dict 반환.
+
+    daily_papers 조회를 거치지 않으므로 rank/importance는 None/normal 기본값.
+    """
+    semaphore = asyncio.Semaphore(max_concurrent)
+    async with httpx.AsyncClient() as client:
+        tasks = [_fetch_paper_detail(client, semaphore, aid) for aid in arxiv_ids]
+        details = await asyncio.gather(*tasks)
+
+    results = []
+    for aid, detail in zip(arxiv_ids, details):
+        if detail is None:
+            logger.warning(f"[{aid}] 상세 메타 수집 실패 — 스킵")
+            continue
+        results.append(_normalize_paper({"rank": None}, detail))
+    return results
+
+
+def fetch_papers_by_ids(arxiv_ids: list[str]) -> list[dict]:
+    """동기 진입점. 임의의 arxiv_id 목록(예: classics)에 대해 메타 수집."""
+    if not arxiv_ids:
+        return []
+    return asyncio.run(_fetch_by_ids(arxiv_ids))

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getAvailableDates, getMonthlyDates, getPapersForDate, getStats } from '@/lib/db';
+import { getAvailableDates, getClassicsForDate, getMonthlyDates, getPapersForDate, getStats } from '@/lib/db';
+import ClassicsSection from '@/components/ClassicsSection';
 import DateArchive from '@/components/DateArchive';
 import PapersView from '@/components/PapersView';
 
@@ -32,6 +33,7 @@ export default function DatePage({ params }: Props) {
   if (!dates.includes(params.date)) notFound();
 
   const papers = getPapersForDate(params.date);
+  const classics = getClassicsForDate(params.date);
   const { total } = getStats();
   const monthlyDates = getMonthlyDates();
 
@@ -39,6 +41,7 @@ export default function DatePage({ params }: Props) {
     <main>
       <DateArchive dates={dates} currentDate={params.date} monthlyDates={monthlyDates} />
       <div className="max-w-4xl mx-auto px-4 pb-16">
+        <ClassicsSection classics={classics} />
         <PapersView papers={papers} total={total} date={params.date} />
       </div>
     </main>

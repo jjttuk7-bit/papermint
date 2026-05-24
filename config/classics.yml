@@ -1,0 +1,218 @@
+# Classics 시드 리스트 — 역대급 논문 큐레이션
+# 매일 슬롯별 1편씩 라운드로빈 → 일간 논문과 함께 게시
+#
+# 규칙
+#   - arxiv_id만 신뢰 가능한 ID. 변경 시 HF Papers API에 존재하는지 사전 검증 필수
+#   - 한 슬롯 내 순서 = 노출 순서 (위에서부터 소진)
+#   - 모든 슬롯 소진 시 처음으로 순환 (재등장 허용)
+#   - 동일 논문이 일간 논문에 등장하면 그날 classics에서는 스킵
+#
+# 슬롯 분류 기준
+#   foundation : 아키텍처/학습/효율/이론/생성 기반 (도메인 무관)
+#   vision     : 비전 도메인 임팩트 (검출/세분화/ViT/생성/3D)
+#   language   : LLM/NLP 도메인 임팩트 (사전학습/정렬/추론/RAG)
+
+foundation:
+  # Architecture & Building Blocks
+  - "1706.03762"  # Attention Is All You Need
+  - "1512.03385"  # ResNet
+  - "1502.03167"  # BatchNorm
+  - "1607.06450"  # LayerNorm
+  - "1910.07467"  # RMSNorm
+  - "2002.05202"  # GLU Variants (SwiGLU)
+  - "1606.08415"  # GELU
+  - "2104.09864"  # RoPE
+  - "2108.12409"  # ALiBi
+  - "1911.02150"  # Multi-Query Attention
+  - "2305.13245"  # Grouped-Query Attention
+  - "1901.02860"  # Transformer-XL
+  - "2004.05150"  # Longformer
+  - "2007.14062"  # BigBird
+  - "2009.14794"  # Performer
+  # Training & Optimization
+  - "1412.6980"   # Adam
+  - "1711.05101"  # AdamW
+  - "1207.0580"   # Dropout
+  - "1608.03983"  # SGDR (Cosine LR)
+  - "1710.03740"  # Mixed Precision Training
+  - "2010.01412"  # SAM (Sharpness-Aware)
+  - "2302.06675"  # Lion Optimizer
+  - "1503.02531"  # Knowledge Distillation
+  - "1803.03635"  # Lottery Ticket
+  - "2106.09685"  # LoRA
+  - "2305.14314"  # QLoRA
+  - "1902.00751"  # Adapter
+  # Generative Foundations
+  - "1406.2661"   # GAN
+  - "1312.6114"   # VAE
+  - "2006.11239"  # DDPM
+  - "2010.02502"  # DDIM
+  - "2112.10752"  # Latent Diffusion
+  - "2011.13456"  # Score-based SDE
+  - "1701.06538"  # Sparsely-Gated MoE
+  - "2101.03961"  # Switch Transformer
+  # Efficiency & Scaling Infra
+  - "2205.14135"  # FlashAttention
+  - "2307.08691"  # FlashAttention-2
+  - "2312.00752"  # Mamba
+  - "2111.00396"  # S4
+  - "2305.13048"  # RWKV
+  - "1909.08053"  # Megatron-LM
+  - "1910.02054"  # ZeRO
+  - "1811.06965"  # GPipe
+  - "2210.17323"  # GPTQ
+  - "2306.00978"  # AWQ
+  - "2211.10438"  # SmoothQuant
+  - "2110.02861"  # 8-bit Optimizers
+  - "2211.17192"  # Speculative Decoding
+  - "2309.00071"  # YaRN
+  - "2306.15595"  # Position Interpolation
+  # Theory & Self-Supervised
+  - "2001.08361"  # Kaplan Scaling Laws
+  - "2203.15556"  # Chinchilla
+  - "2206.07682"  # Emergent Abilities
+  - "2002.05709"  # SimCLR
+  - "1911.05722"  # MoCo
+  - "2006.07733"  # BYOL
+  - "1807.03748"  # CPC
+  - "1806.07366"  # Neural ODE
+  - "1409.3215"   # Seq2Seq
+  - "1301.3781"   # Word2Vec
+
+vision:
+  # Classic CNNs
+  - "1409.1556"   # VGG
+  - "1409.4842"   # GoogLeNet / Inception
+  - "1512.00567"  # Inception v3
+  - "1608.06993"  # DenseNet
+  - "1611.05431"  # ResNeXt
+  - "1709.01507"  # SENet
+  - "1704.04861"  # MobileNet
+  - "1801.04381"  # MobileNet v2
+  - "1905.11946"  # EfficientNet
+  - "2201.03545"  # ConvNeXt
+  # Detection & Segmentation
+  - "1506.01497"  # Faster R-CNN
+  - "1703.06870"  # Mask R-CNN
+  - "1506.02640"  # YOLO v1
+  - "1804.02767"  # YOLOv3
+  - "1512.02325"  # SSD
+  - "2005.12872"  # DETR
+  - "2010.04159"  # Deformable DETR
+  - "2203.03605"  # DINO Detector
+  - "1505.04597"  # U-Net
+  - "1411.4038"   # FCN
+  - "1606.00915"  # DeepLab
+  - "2112.01527"  # Mask2Former
+  # ViT & Self-Supervised Vision
+  - "2010.11929"  # ViT
+  - "2012.12877"  # DeiT
+  - "2103.14030"  # Swin Transformer
+  - "2106.08254"  # BEiT
+  - "2111.06377"  # MAE
+  - "2104.14294"  # DINO
+  - "2304.07193"  # DINOv2
+  - "2304.02643"  # SAM
+  - "2408.00714"  # SAM 2
+  - "2303.05499"  # Grounding DINO
+  # Vision-Language & Text-to-Image
+  - "2103.00020"  # CLIP
+  - "2102.05918"  # ALIGN
+  - "2102.12092"  # DALL-E
+  - "2204.06125"  # DALL-E 2 (unCLIP)
+  - "2205.11487"  # Imagen
+  - "2112.10741"  # GLIDE
+  - "2302.05543"  # ControlNet
+  - "2212.09748"  # DiT (Diffusion Transformer)
+  # GANs
+  - "1611.07004"  # Pix2Pix
+  - "1703.10593"  # CycleGAN
+  - "1812.04948"  # StyleGAN
+  - "1912.04958"  # StyleGAN2
+  - "1809.11096"  # BigGAN
+  # Diffusion Customization & Video
+  - "2208.12242"  # DreamBooth
+  - "2208.01618"  # Textual Inversion
+  - "2211.09800"  # InstructPix2Pix
+  - "2307.04725"  # AnimateDiff
+  - "2311.15127"  # Stable Video Diffusion
+  # 3D / NeRF / Gaussian
+  - "2003.08934"  # NeRF
+  - "2304.06706"  # Zip-NeRF (HF 미등재였던 Instant-NGP 대체)
+  - "2011.12948"  # Nerfies (HF 미등재였던 Mip-NeRF 대체)
+  - "2308.04079"  # 3D Gaussian Splatting
+  - "2209.14988"  # DreamFusion
+  # Low-level & Misc Classics
+  - "1501.00092"  # SRCNN
+  - "1809.00219"  # ESRGAN
+  - "2003.12039"  # RAFT
+  - "1611.08050"  # OpenPose
+  - "1904.01355"  # FCOS
+
+language:
+  # Encoders & Embeddings
+  - "1810.04805"  # BERT
+  - "1907.11692"  # RoBERTa
+  - "1909.11942"  # ALBERT
+  - "1906.08237"  # XLNet
+  - "2003.10555"  # ELECTRA
+  - "2006.03654"  # DeBERTa
+  - "1802.05365"  # ELMo
+  - "1801.06146"  # ULMFiT
+  - "1908.10084"  # Sentence-BERT
+  - "2104.08821"  # SimCSE
+  # Seq2Seq & Frontier LLMs
+  - "1910.10683"  # T5
+  - "1910.13461"  # BART
+  - "2010.11934"  # mT5
+  - "2001.08210"  # mBART
+  - "2005.14165"  # GPT-3
+  - "2303.08774"  # GPT-4 Technical Report
+  - "2204.02311"  # PaLM
+  - "2305.10403"  # PaLM 2
+  - "2302.13971"  # LLaMA
+  - "2307.09288"  # LLaMA 2
+  # Modern Open Models
+  - "2310.06825"  # Mistral 7B
+  - "2401.04088"  # Mixtral 8x7B
+  - "2403.08295"  # Gemma
+  - "2309.16609"  # Qwen
+  - "2407.10671"  # Qwen2
+  - "2405.04434"  # DeepSeek-V2
+  - "2412.19437"  # DeepSeek-V3
+  - "2501.12948"  # DeepSeek-R1
+  - "2311.16867"  # Falcon
+  - "2304.12244"  # WizardLM
+  # Alignment & Instruction
+  - "2203.02155"  # InstructGPT
+  - "1706.03741"  # Deep RL from Human Preferences
+  - "2204.05862"  # Helpful & Harmless
+  - "2212.08073"  # Constitutional AI
+  - "2305.18290"  # DPO
+  - "2303.17651"  # Self-Refine
+  - "2306.05685"  # MT-Bench / LLM-as-Judge
+  - "2212.10560"  # Self-Instruct
+  - "2109.01652"  # FLAN
+  - "2110.08207"  # T0
+  # Reasoning, Prompting & Agents
+  - "2201.11903"  # Chain of Thought
+  - "2203.11171"  # Self-Consistency
+  - "2305.10601"  # Tree of Thoughts
+  - "2210.03629"  # ReAct
+  - "2303.11366"  # Reflexion
+  - "2302.04761"  # Toolformer
+  - "2305.16291"  # Voyager
+  - "2112.09332"  # WebGPT
+  - "2305.11206"  # LIMA
+  - "2203.14465"  # STaR
+  # Retrieval, Long-Context & Tokenization
+  - "2005.11401"  # RAG
+  - "2004.04906"  # DPR
+  - "2004.12832"  # ColBERT
+  - "2002.08909"  # REALM
+  - "2112.04426"  # RETRO
+  - "2007.01282"  # Fusion-in-Decoder
+  - "2309.12307"  # LongLoRA
+  - "2309.17453"  # StreamingLLM
+  - "1508.07909"  # BPE
+  - "1808.06226"  # SentencePiece

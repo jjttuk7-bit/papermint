@@ -25,13 +25,16 @@ CREATE TABLE papers (
     prompt_version TEXT,    -- 처리에 사용된 프롬프트 버전 (ex: "v1.1")
     methodology_ko TEXT,    -- v1.1: 방법론 요약 (3~5문장)
     results_ko TEXT,        -- v1.1: 핵심 실험 결과 요약
-    limitations_ko TEXT     -- v1.1: 한계점 1~3가지
+    limitations_ko TEXT,    -- v1.1: 한계점 1~3가지
+    is_classic BOOLEAN DEFAULT FALSE,  -- v1.2: 역대급 큐레이션 여부
+    classic_slot TEXT       -- v1.2: foundation / vision / language (NULL if not classic)
 );
 
 CREATE INDEX idx_papers_arxiv ON papers(arxiv_id);
 CREATE INDEX idx_papers_published ON papers(published);
 CREATE INDEX idx_papers_fetched ON papers(fetched_at);
 CREATE INDEX idx_papers_processed ON papers(processed_at);
+CREATE INDEX idx_papers_classic ON papers(is_classic, classic_slot);
 
 -- daily_papers 테이블
 CREATE TABLE daily_papers (

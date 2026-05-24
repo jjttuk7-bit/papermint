@@ -1,4 +1,5 @@
-import { getAvailableDates, getMonthlyDates, getPapersForDate, getStats } from '@/lib/db';
+import { getAvailableDates, getClassicsForDate, getMonthlyDates, getPapersForDate, getStats } from '@/lib/db';
+import ClassicsSection from '@/components/ClassicsSection';
 import DateArchive from '@/components/DateArchive';
 import PapersView from '@/components/PapersView';
 
@@ -16,6 +17,7 @@ export default function Home() {
   }
 
   const papers = getPapersForDate(latestDate);
+  const classics = getClassicsForDate(latestDate);
   const { total } = getStats();
   const monthlyDates = getMonthlyDates();
 
@@ -23,6 +25,7 @@ export default function Home() {
     <main>
       <DateArchive dates={dates} currentDate={latestDate} monthlyDates={monthlyDates} />
       <div className="max-w-4xl mx-auto px-4 pb-16">
+        <ClassicsSection classics={classics} />
         <PapersView papers={papers} total={total} date={latestDate} />
       </div>
     </main>

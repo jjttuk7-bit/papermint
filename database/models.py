@@ -90,6 +90,8 @@ class Paper(Base):
     methodology_ko = Column(Text)
     results_ko = Column(Text)
     limitations_ko = Column(Text)
+    is_classic = Column(Boolean, default=False)
+    classic_slot = Column(String)  # foundation / vision / language
 
     daily_entries = relationship("DailyPaper", back_populates="paper")
 
